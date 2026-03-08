@@ -1,29 +1,31 @@
-import os
-from openai import OpenAI
-
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+import re
 
 def analyze_jd(jd_text):
 
-    prompt = f"""
-Extract the following from the job description:
+    # simple keyword list
+    skills_list = [
+        "python",
+        "sql",
+        "aws",
+        "azure",
+        "terraform",
+        "kubernetes",
+        "docker",
+        "informatica",
+        "spark",
+        "hadoop",
+        "java",
+        "snowflake"
+    ]
 
-1. Skills
-2. Tools
-3. Experience
-4. Responsibilities
+    jd_text_lower = jd_text.lower()
 
-Return JSON format.
+    found_skills = []
 
-Job Description:
-{jd_text}
-"""
+    for skill in skills_list:
+        if skill in jd_text_lower:
+            found_skills.append(skill)
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "user", "content": prompt}
-        ]
-    )
-
-    return response.choices[0].message.content
+    return {
+        "skills": found_skills
+    }
